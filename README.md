@@ -1,0 +1,2 @@
+### Project Overview
+This project was about configuring a Linux Web Server from the ground up. An EC2 instance with a baseline installation of Linux was used for this project. Securing the server from a number of attack vectors, installing and configuring a database server, and deploying an existing web application onto it, were part of this project. The goal was to have a web application running live on a secure web server. The URL to the hosted web application is: (ec2-3-121-184-12.eu-central-1.compute.amazonaws.com)
