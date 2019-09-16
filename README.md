@@ -138,7 +138,7 @@ application.secret_key = 'Super secret key'
 ### Finally at this point the Web Application should be up and running!
 
 ### REFERENCES
-[AWS EC2 Documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html)
-[Udacity](https://www.udacity.com/)
-[Stack Overflow](https://stackoverflow.com/)
-[Other udacity students](https://github.com/kongling893/Linux-Server-Configuration-UDACITY)
+1. [AWS EC2 Documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html)
+2. [Udacity](https://www.udacity.com/)
+3. [Stack Overflow](https://stackoverflow.com/)
+4. [Other udacity students](https://github.com/kongling893/Linux-Server-Configuration-UDACITY)
