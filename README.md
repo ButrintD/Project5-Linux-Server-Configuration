@@ -52,4 +52,64 @@ This project was about configuring a Linux Web Server from the ground up. An EC2
 1. Excecute the following command: **sudo dpkg-reconfigure tzdata**
 2. Select None, this sets the timezone to UTC.
 
-###TODO
+### Install and configure Apache to serve a Python mod_wsgi application
+1. Install Apache: **sudo apt-get install apache2**
+2. Check **http://ec2-3-121-184-12.eu-central-1.compute.amazonaws.com/** to see if Apache is working. The default page will be shown
+3. Install mod_wsgi: **sudo apt-get install libapache2-mod-wsgi**
+
+### Install and configure PostgreSQL
+1. Install PostgreSQL: **sudo apt-get install postgresql**
+2. Excecute this command: **sudo nano /etc/postgresql/9.5/main/pg_hba.conf**. Check this file and make sure PostgreSQL does not allow remote connections
+
+### Create a new database user named catalog that has limited permissions
+1. Excecute the following command: **sudo su - postgres**
+2. Excecute the following command: **psql**
+1. Create a new database called catalog: **CREATE DATABASE catalog;**
+2. Create a new user called catalog: **CREATE USER catalog;**
+3. Set a new password for user catalog: **ALTER ROLE catalog with password 'grader';**
+4. Grant permissions to user catalog: **GRANT ALL PRIVILEGES ON DATABASE catalog TO catalog;**
+5. Exit from psql: **\q**
+6. Return to ubuntu user: **exit**
+
+### Setup the catalog project
+1. Install git: **sudo apt-get install git**
+2. Make an itemcatalog directory in /var/www/: **mkdir /var/www/itemcatalog**
+3. Navigate to the newly created directory
+4. Clone the catalog project from github: **git clone https://github.com/ButrintD/itemcatalog.git itemcatalog**
+5. Change the owner: **sudo chown -R ubuntu:ubuntu itemcatalog/**
+6. Navigate to /var/www/itemcatalog/itemcatalog
+7. Rename project.py to __init__.py using this command: **sudo mv project.py __init__.py**
+8. Edit the database_setup.py, db_populator.py and project.py by changing this line: **create_engine('sqlite:///itemcatalog.db')** to this: **create_engine('postgresql://catalog:grader@localhost/catalog')**
+9. Edit the **client_secrets.json** file and update the **redirect_uris** and **javascript_origins** with the new EC2 instance.
+10. Install pip: **sudo apt-get install python-pip**
+11. Install the neccessary packages that are used in the catalog project. These are all the packages needed:
+12. **sudo pip install flask**
+13. **sudo apt-get install libpq-dev**
+14. **sudo pip install psycopg2**
+15. **sudo pip install sqlalchemy**
+16. **sudo pip install requests**
+17. **sudo pip install httplib2**
+18. **sudo pip install oauth2client**
+
+### Configure and enable a new Virtual Host
+1. Create this file itemcatalog.conf and open it: **sudo nano /etc/apache2/sites-available/itemcatalog.conf**
+2. Add the following content to the file:
+<VirtualHost *:80>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ServerName 3.121.184.12
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ServerAdmin admin@3.121.184.12
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WSGIScriptAlias / /var/www/itemcatalog/itemcatalog.wsgi
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<Directory /var/www/itemcatalog/itemcatalog/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Order allow,deny
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Allow from all
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Options -Indexes
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Directory>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alias /static /var/www/itemcatalog/itemcatalog/static
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<Directory /var/www/itemcatalog/itemcatalog/static/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Order allow,deny
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Allow from all
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Options -Indexes
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Directory>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ErrorLog ${APACHE_LOG_DIR}/error.log
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LogLevel warn
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
