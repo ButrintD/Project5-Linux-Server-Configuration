@@ -97,22 +97,22 @@ This project was about configuring a Linux Web Server from the ground up. An EC2
 ~~~~
 <VirtualHost *:80>
         ServerName 3.121.184.12
-		    ServerAdmin admin@3.121.184.12
-		    WSGIScriptAlias / /var/www/itemcatalog/itemcatalog.wsgi
-		    <Directory /var/www/itemcatalog/itemcatalog/>
-			Order allow,deny
-			Allow from all
-			Options -Indexes
-	    	</Directory>
-    		Alias /static /var/www/itemcatalog/itemcatalog/static
-    		<Directory /var/www/itemcatalog/itemcatalog/static/>
-    		Order allow,deny
-    		Allow from all
-    		Options -Indexes
-    		</Directory>
-    		ErrorLog ${APACHE_LOG_DIR}/error.log
-    		LogLevel warn
-    		CustomLog ${APACHE_LOG_DIR}/access.log combined
+		ServerAdmin admin@3.121.184.12
+		WSGIScriptAlias / /var/www/itemcatalog/itemcatalog.wsgi
+		<Directory /var/www/itemcatalog/itemcatalog/>
+	    Order allow,deny
+		Allow from all
+		Options -Indexes
+	    </Directory>
+    	Alias /static /var/www/itemcatalog/itemcatalog/static
+    	<Directory /var/www/itemcatalog/itemcatalog/static/>
+    	Order allow,deny
+    	Allow from all
+    	Options -Indexes
+    	</Directory>
+    	ErrorLog ${APACHE_LOG_DIR}/error.log
+    	LogLevel warn
+    	CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 ~~~~
 3. Enable the Virtual host: **sudo a2ensite itemcatalog**
@@ -135,4 +135,10 @@ application.secret_key = 'Super secret key'
 4. Disable the default virtual host: **sudo a2dissite 000-default.conf**
 5. Restart Apache: **sudo service apache2 restart**
 
-### At this point the Web Application should be up and running.
+### Finally at this point the Web Application should be up and running!
+
+### REFERENCES
+[AWS EC2 Documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html)
+[Udacity](https://www.udacity.com/)
+[Stack Overflow](https://stackoverflow.com/)
+[Other udacity students](https://github.com/kongling893/Linux-Server-Configuration-UDACITY)
